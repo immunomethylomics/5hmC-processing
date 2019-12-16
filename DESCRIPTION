@@ -1,0 +1,17 @@
+Package: OxyBSpar
+Title: OxyBS parallel adaptation
+Version: 0.0.0.9000
+Authors@R: 
+    person(given = "Lucas A",
+           family = "Salas",
+           role = c("aut", "cre"),
+           email = "lucas.a.salas@dartmouth.edu",
+           comment = c(ORCID = "0000-0002-2279-4097"))
+Description: Implementation of OxyBS using parallel and serial processing.
+Depends: R (>= 3.5), minfi (>= 1.21.2), SummarizedExperiment, foreach,
+         OxyBS, doParallel
+License: GNU-3
+Encoding: UTF-8
+LazyData: true
+URL: https://github.com/immunomethylomics/OxyBSpar
+RoxygenNote: 7.0.2
