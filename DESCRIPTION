@@ -15,3 +15,7 @@ Encoding: UTF-8
 LazyData: true
 URL: https://github.com/immunomethylomics/OxyBSpar
 RoxygenNote: 7.0.2
+Suggests: 
+    knitr,
+    rmarkdown
+VignetteBuilder: knitr

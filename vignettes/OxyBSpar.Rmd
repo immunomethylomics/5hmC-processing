@@ -1,0 +1,45 @@
+---
+title: "OxyBSpar"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{OxyBSpar}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(OxyBSpar)
+data(OxyBSSampleData)
+nSpecimens <- 30
+nCpGs <- 30
+# Calculate Total Signals
+signalBS <- exampleMethBS+exampleUnmethBS
+signalOxBS <- exampleMethOxBS+exampleUnmethOxBS
+# Calculate Beta Values
+betaBS <- exampleMethBS/signalBS
+betaOxBS <- exampleMethOxBS/signalOxBS
+#Serial
+MethOxy <- array(NA,dim=c(nCpGs,nSpecimens,3))
+dimnames(MethOxy) <- list(rownames(exampleMethBS)[1:nCpGs],
+colnames(exampleMethBS)[1:nSpecimens],
+c("C","5mC","5hmC"))
+# Process results (one array at a time)
+system.time(for(i in 1:nSpecimens){
+MethOxy[,i,] <- fitOxBS(betaBS[,i],betaOxBS[,i],signalBS[,i],signalOxBS[,i])
+})
+#Optimized serial solution
+system.time(MethOxy.serial <- fitOxBS.serial(betaBS,betaOxBS,
+signalBS,signalOxBS))
+identical(MethOxy, MethOxy.serial)
+#Parallel solution
+system.time(MethOxy.parallel <- fitOxBS.mc(betaBS,betaOxBS,
+signalBS,signalOxBS))
+identical(MethOxy, MethOxy.parallel)
+```
