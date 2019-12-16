@@ -46,7 +46,7 @@ c("C","5mC","5hmC"))
 system.time(for(i in 1:nSpecimens){
 MethOxy[,i,] <- fitOxBS(betaBS[,i],betaOxBS[,i],signalBS[,i],signalOxBS[,i])
 })
-#Parallel solution
+#Optimized serial solution
 system.time(MethOxy.serial <- fitOxBS.serial(betaBS,betaOxBS,
 signalBS,signalOxBS))
 identical(MethOxy, MethOxy.serial)
