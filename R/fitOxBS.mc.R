@@ -45,15 +45,13 @@
 #' @param
 #' eps	small positive value representing numerical zero
 #' @param
-#' nCores number of Cores used for the analysis
+#' nCores number of Cores used for the analysis. You can use detectCores() too.
 #'@return
 #' This function will return an array containing (C,5mC,5hmC), per CpG and per
 #' subject. Uses maximum likelihood to estimate one by one CpG per specimen.
 #' @export
 fitOxBS.mc<-function (betaBS, betaOxBS, signalBS, signalOxBS, eps = 1e-05,
-                      nCores =NULL) {
-    if (nCores==NULL)
-    nCores<-detectCores()
+                      nCores=2) {
     c1 <- makeCluster(nCores)
     registerDoParallel(c1)
     nSpecimens<-dim(betaBS)[2]

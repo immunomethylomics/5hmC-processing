@@ -4,7 +4,7 @@
 \alias{fitOxBS.mc}
 \title{fitOxBS.mc}
 \usage{
-fitOxBS.mc(betaBS, betaOxBS, signalBS, signalOxBS, eps = 1e-05, nCores = NULL)
+fitOxBS.mc(betaBS, betaOxBS, signalBS, signalOxBS, eps = 1e-05, nCores = 2)
 }
 \arguments{
 \item{betaBS}{beta value from conventional bisulfite conversion.}
@@ -17,7 +17,7 @@ fitOxBS.mc(betaBS, betaOxBS, signalBS, signalOxBS, eps = 1e-05, nCores = NULL)
 
 \item{eps}{small positive value representing numerical zero}
 
-\item{nCores}{number of Cores used for the analysis}
+\item{nCores}{number of Cores used for the analysis. You can use detectCores() too.}
 }
 \value{
 This function will return an array containing (C,5mC,5hmC), per CpG and per
