@@ -1,6 +1,6 @@
 Package: OxyBSpar
 Title: OxyBS parallel adaptation
-Version: 0.0.0.9000
+Version: 0.0.0.91
 Authors@R: 
     person(given = "Lucas A",
            family = "Salas",
@@ -14,7 +14,7 @@ License: GNU-3
 Encoding: UTF-8
 LazyData: true
 URL: https://github.com/immunomethylomics/OxyBSpar
-RoxygenNote: 7.0.2
+RoxygenNote: 7.1.0
 Suggests: 
     knitr,
     rmarkdown

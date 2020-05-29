@@ -26,9 +26,13 @@
 #' system.time(for(i in 1:nSpecimens){
 #' MethOxy[,i,] <- fitOxBS(betaBS[,i],betaOxBS[,i],signalBS[,i],signalOxBS[,i])
 #' })
+#' #Serial solution
+#' system.time(MethOxy.serial <- fitOxBS.mc(betaBS,betaOxBS,
+#' signalBS,signalOxBS, nCores=1))
+#' identical(MethOxy, MethOxy.serial)
 #' #Parallel solution
 #' system.time(MethOxy.parallel <- fitOxBS.mc(betaBS,betaOxBS,
-#' signalBS,signalOxBS))
+#' signalBS,signalOxBS, nCores=2))
 #' identical(MethOxy, MethOxy.parallel)
 #' @references EA Houseman, et al. (2016). \emph{OxyBS: estimation of
 #' 5-methylcytosine and 5-hydroxymethylcytosine from tandem-treated oxidative
@@ -52,20 +56,37 @@
 #' @export
 fitOxBS.mc<-function (betaBS, betaOxBS, signalBS, signalOxBS, eps = 1e-05,
                       nCores=2) {
-    c1 <- makeCluster(nCores)
-    registerDoParallel(c1)
-    nSpecimens<-dim(betaBS)[2]
-    nCpGs<-dim(betaBS)[1]
-    out1 <- foreach (j=1:nCpGs, .packages = "OxyBS") %:%
-        foreach(i=1:nSpecimens, .packages = "OxyBS") %dopar%{
-            fitOneOxBS(betaBS[j,i], betaOxBS[j,i], signalBS[j,i],
-                       signalOxBS[j,i], eps = eps)
+    if(nCores==1){
+        nSpecimens<-dim(betaBS)[2]
+        nCpGs<-dim(betaBS)[1]
+        out1 <- foreach (j=1:nCpGs) %:%
+            foreach(i=1:nSpecimens) %do%{
+                fitOneOxBS(betaBS[j,i], betaOxBS[j,i], signalBS[j,i],
+                           signalOxBS[j,i], eps = eps)
+            }
+        out <- array(data=NA, dim = c(nCpGs,nSpecimens,3), dimnames = list(
+            rownames(betaBS), colnames(betaBS), c("C","5mC","5hmC")))
+        for (k in 1:nSpecimens){
+            out[k,,]<-matrix(unlist(out1[[k]]), ncol=3, byrow = TRUE)
         }
-    stopCluster(c1)
-    out <- array(data=NA, dim = c(nCpGs,nSpecimens,3), dimnames = list(
-        rownames(betaBS), colnames(betaBS), c("C","5mC","5hmC")))
-    for (k in 1:nSpecimens){
-        out[k,,]<-matrix(unlist(out1[[k]]), ncol=3, byrow = TRUE)
+        out
+    } else{
+        c1 <- makeCluster(nCores)
+        registerDoParallel(c1)
+        nSpecimens<-dim(betaBS)[2]
+        nCpGs<-dim(betaBS)[1]
+        out1 <- foreach (j=1:nCpGs, .packages = "OxyBS") %:%
+            foreach(i=1:nSpecimens, .packages = "OxyBS") %dopar%{
+                fitOneOxBS(betaBS[j,i], betaOxBS[j,i], signalBS[j,i],
+                           signalOxBS[j,i], eps = eps)
+            }
+        stopCluster(c1)
+        out <- array(data=NA, dim = c(nCpGs,nSpecimens,3), dimnames = list(
+            rownames(betaBS), colnames(betaBS), c("C","5mC","5hmC")))
+        for (k in 1:nSpecimens){
+            out[k,,]<-matrix(unlist(out1[[k]]), ncol=3, byrow = TRUE)
+        }
+        out
     }
-    out
+
 }
